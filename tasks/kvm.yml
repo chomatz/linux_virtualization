@@ -1,0 +1,59 @@
+---
+
+- name: ensure tasks run only on selected os releases
+  block:
+
+    - name: install virtualization packages
+      ansible.builtin.package:
+        name: "{{ kvm_package }}"
+        state: latest
+
+    - name: amd specific settings
+      block:
+
+        - name: enable amd nested virtualization
+          ansible.builtin.lineinfile:
+            path: /etc/modprobe.d/kvm.conf
+            regexp: '^.*options kvm_amd nested'
+            line: options kvm_amd nested=1
+            create: true
+            owner: root
+            group: root
+            mode: "0644"
+
+        - name: configure amd kernel option(s)
+          ansible.builtin.include_role:
+            name: boot_loader
+            tasks_from: kernel_arguments.yml
+          vars:
+            grubby_task: configure
+            kernel_arguments: "{{ kernel_option_amd }}"
+
+      when: ansible_processor.1 == "AuthenticAMD"
+
+    - name: intel specific settings
+      block:
+
+        - name: enable intel nested virtualization
+          ansible.builtin.lineinfile:
+            path: /etc/modprobe.d/kvm.conf
+            regexp: '^.*options kvm_intel nested'
+            line: options kvm_intel nested=1
+            create: true
+            owner: root
+            group: root
+            mode: "0644"
+
+        - name: configure intel kernel option(s)
+          ansible.builtin.include_role:
+            name: boot_loader
+            tasks_from: kernel_arguments.yml
+          vars:
+            grubby_task: configure
+            kernel_arguments: "{{ kernel_option_intel }}"
+
+      when: ansible_processor.1 == "GenuineIntel"
+
+  when: ansible_distribution == "Fedora"
+
+...
