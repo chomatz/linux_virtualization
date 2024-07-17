@@ -1,0 +1,18 @@
+---
+
+kernel_option_amd:
+  - amd-iommu=on
+  - iommu=pt
+  - pci=nommconf
+kernel_option_intel:
+  - intel_iommu=on
+kvm_bridge: kvmbr0
+kvm_package:
+  - bridge-utils
+  - libvirt
+  - qemu-kvm
+  - virt-install
+  - virt-manager
+  - virt-viewer
+
+...
