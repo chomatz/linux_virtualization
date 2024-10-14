@@ -54,6 +54,8 @@
 
       when: ansible_processor.1 == "GenuineIntel"
 
-  when: ansible_distribution == "Fedora"
+  when: >
+    ansible_distribution == "Fedora" or
+    ansible_distribution == "Rocky"
 
 ...

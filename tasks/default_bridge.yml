@@ -119,6 +119,8 @@
         - enable_network_bridge
         - ansible_default_ipv4.alias != kvm_bridge
 
-  when: ansible_distribution == "Fedora"
+  when: >
+    ansible_distribution == "Fedora" or
+    ansible_distribution == "Rocky"
 
 ...
